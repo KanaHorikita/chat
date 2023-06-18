@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Chatアプリ</title>
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<!-- コンテンツ表示画面 -->
+
+<div>
+    <div>
+        名前: <input type="text" id="uname">
+    </div>
+    <div>
+        <textarea name="" id="text" cols="30" rows="10"></textarea>
+        <button id="send">送信</button>
+    </div>
+    <div id="output"><span></span></div>
+</div>
+
+<!--/ コンテンツ表示画面 -->
+
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- JQuery -->
+
+
+<!-- ** 以下Firebase ** コピペする -->
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+    import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved }
+    from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-database.js";
+  
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQI8l5oMBiZyXQ99WCpfA8i0wxp5PA0kE",
+      authDomain: "fir-demo2-59584.firebaseapp.com",
+      projectId: "fir-demo2-59584",
+      storageBucket: "fir-demo2-59584.appspot.com",
+      messagingSenderId: "189502933741",
+      appId: "1:189502933741:web:4892d2f5603ea7da92dae4"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig); //firebaseのオブジェクトがつまっている定数
+
+    // Realtime DB に接続する
+    const db = getDatabase(app); 
+    const dbRef = ref(db, "chat"); // refは便利ツールとして読み込んでいるもの。realtime DBの「chat」を参照するという指示
+    // 送信ボタンが押されたら、データをDBに送信
+    $("#send").on("click", function () {
+    // 保存したいデータのオブジェクトを作る
+    const msg = {
+        uname: $("#uname").val(), //htmlのinputの要素から値をひっぱってくる
+        text: $("#text").val()
+    };
+    console.log(msg)
+
+    // 新規のデータを送れる状態にセット
+    const newPostRef = push(dbRef); //chatというスペースにデータを入れるための空箱（新しいID）を置く
+
+    // DBに値を送信
+    set(newPostRef, msg);
+    });
+
+    //child（何か新しいデータ）がdbRef（chat）に追加されたときにすることを指示
+    onChildAdded(dbRef, function (data) { //
+    const msg = data.val(); //data.val＝firebaseの文法。何のデータが追加されたかをオブジェクト形式に変換する
+    const key = data.key; //keyはfirebase上で指定される固有のランダムのID。それを取得
+    const h = `<p id = "${key}">${msg.uname}: ${msg.text}<button class="remove"><img src="./imgs/remove.jpg" width="20" height="20" ></img></button></p>`;
+    $("#output").append(h) //append=追加を指示。誰がなんと送ったかを表示。
+    });
+
+    //削除ボタンがクリックされたらクリックイベントが発火
+    $("#output").on("click", ".remove", function(){
+        // alert("クリックされた");
+        const id = $(this).parent().attr("id"); // pタグのid (=firebaseのキー情報)を取得
+        console.log(id); 
+        const chatRef = ref(db, "chat/" + id);//どのチャットに対して操作したいのか指定する（ref）
+        remove(chatRef); //firebaseの中身を削除
+
+            // 1. pタグのid (=firebaseのキー情報)を取得
+            //   →ヒント: クリックされた要素自体を取得するのは $(this) と書く
+            // 2. どのチャットに対して操作したいのかを指定する（ref）
+            //   →ヒント: const dbRef = ref(db, "chat"); と書くと、 chatという場所に対して指示が出せた
+            //    今回は chatの中のkeyに指示を出したい
+            //    例えば、 -N2GlZ-7UDtuYDrvtSOk に指示を出したいとすると以下のように書く
+            //    const chatRef = ref(db, "chat/-N2GlZ-7UDtuYDrvtSOk");
+            // 3. firebaseの中身を削除する
+            //   →ヒント: remove(chatRef); でいける
+        
+    })
+    
+    onChildRemoved(dbRef, function (data){
+            const id = data.key;
+            console.log(id);
+            $("#" + id).remove();
+            })
+    
+    //Firebaseのメッセージデータを削除
+    //HTML要素を削除
+    
+    
+
+
+  </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

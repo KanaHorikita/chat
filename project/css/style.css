@@ -1,0 +1,50 @@
+body {
+    background-color: beige;
+    /* font-family: 'Yu Gothic UI',sans-serif; */
+}
+
+#send {
+    background-color: white;
+    border-color: white;
+    border-radius: 100vh;
+    padding: 5px 20px;
+}
+
+#output {
+    background-color: burlywood;
+    height: 400px;
+    margin-top: 10px;
+    width: 300px;
+    overflow: scroll;
+}
+
+.remove {
+    margin-left: 10px;
+    background-color: white;
+    border-color: white;
+    cursor: pointer;
+}
+
+.sended_text{
+    position: relative;
+    padding: 5px 20px;
+    margin-left: 5px;
+    margin-top: 0px;
+    background-color: #fff3ad;
+    display: inline-block;   
+    border: 0px; 
+  }
+  
+/* beforeで三角を表現 */
+.sended_text::before{
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: -15px;
+    display: block;
+    width: 0;
+    height: 0;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid #fff3ad;
+    border-left: 15px solid transparent;
+  }
